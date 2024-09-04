@@ -137,29 +137,4 @@ class PositionalEncodingVariable(nn.Module):
         return x
 
 
-if __name__ == "__main__":
-    import torchinfo 
-    from transformer_config import WHISPER_ENCODER_CONFIG, WHISPER_ENCODER_CONFIG_SMALL
-    from whisper_wrapper import WhisperWrapper_encoder
-    import matplotlib.pyplot as plt
-    import torchaudio
-    trans = TransformerWrapper(WHISPER_ENCODER_CONFIG_SMALL).cuda()
-    whisper_enc = WhisperWrapper_encoder(use_feat_extractor=True).cuda().eval()
-    print(torchinfo.summary(trans))
-    #input = torch.randn(2, 16000*5).cuda()
-    input = torchaudio.load("/mnt/parscratch/users/acp20glc/VoiceBank/clean_testset_wav_16k/p232_001.wav")[0].cuda()
-    whisper_rep = whisper_enc(input)
-    print(whisper_rep.shape)
-    trans_rep = trans(whisper_rep)
-    print(trans_rep.shape)
 
-    # Plotting
-    fig, axs = plt.subplots(3, 1, figsize=(10, 10))
-    axs[0].plot(input[0].cpu().numpy())
-    axs[0].set_title('Input')
-    axs[1].imshow(whisper_rep[0].detach().cpu().numpy().T)
-    axs[1].set_title('Whisper Representation')
-    axs[2].imshow(trans_rep[0].detach().cpu().numpy().T)
-    axs[2].set_title('Transformer Representation')
-    plt.savefig("transformer_rep.png")
-    
