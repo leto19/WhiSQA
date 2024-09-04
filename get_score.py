@@ -6,7 +6,7 @@ import torch
 
 def get_score(audio_file: str, model_type: str) -> None:
     """
-    Get a score for a given audio file.
+    Get a score for a given audio file and print it. 
 
     Args:
         audio_file (str): Path to the audio file, must be 16K sample rate. 
@@ -35,17 +35,35 @@ def get_score(audio_file: str, model_type: str) -> None:
     model.to(device)
     waveform, sample_rate = torchaudio.load(audio_file)
 
+    #check channels
+    if waveform.shape[0] != 1:
+        raise ValueError("Number of input channels should be 1")
+
     # Check sample rate
     if sample_rate != 16000:
         raise ValueError("Sample rate must be 16000")
 
     waveform = waveform.to(device)
     score = model(waveform)
+    if model_type == "multi":
+        score = score.squeeze(0)
 
-    if model_type == "single":
+    return score 
+
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Get a score for a given audio file")
+    parser.add_argument("audio_file", type=str, help="Path to the audio file")
+    parser.add_argument("--model_type", type=str, help="Single headed MOS or multidimension [MOS,Noisiness, Coloration,Discontinuity and Loudness]", default="single")
+    args = parser.parse_args()
+
+
+    score = get_score(args.audio_file, args.model_type)
+    print(score.shape)
+    if args.model_type == "single":
         print("MOS", score.item() * 5)
     else:
-        score = score.squeeze(0)
         mos = score[0].item() * 5
         noisiness = score[1].item() * 5
         coloration = score[2].item() * 5
@@ -58,14 +76,3 @@ def get_score(audio_file: str, model_type: str) -> None:
         print("Loudness", loudness)
 
     sys.exit(0)
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Get a score for a given audio file")
-    parser.add_argument("audio_file", type=str, help="Path to the audio file")
-    parser.add_argument("--model_type", type=str, help="Single headed MOS or multidimension [MOS,Noisiness, Coloration,Discontinuity and Loudness]", default="single")
-    args = parser.parse_args()
-
-    audio_file = args.audio_file
-    model_type = args.model_type
-
-    get_score(audio_file, model_type)
