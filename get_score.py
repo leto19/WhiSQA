@@ -17,17 +17,17 @@ def get_score(audio_file: str, model_type: str) -> None:
     """
     if torch.cuda.is_available():
         device = torch.device("cuda")
-    elif torch.mps.is_available():
-        device = torch.device("mps") #for M1 Macs
+    elif torch.backends.mps.is_available():
+         device = torch.device("mps") #for M1 Macs
     else:
-        device = torch.device("cpu") #Will be slow ! 
+        device = torch.device("cpu") #May be slow ! 
 
     if model_type == "single":
         model = whisperMetricPredictorEncoderLayersTransformerSmall()
-        model.load_state_dict(torch.load("checkpoints/single_head_model.pt"))
+        model.load_state_dict(torch.load("checkpoints/single_head_model.pt",map_location=device))
     elif model_type == "multi":
         model = whisperMetricPredictorEncoderLayersTransformerSmalldim()
-        model.load_state_dict(torch.load("checkpoints/multi_head_model.pt"))
+        model.load_state_dict(torch.load("checkpoints/multi_head_model.pt",map_location=device))
     else:
         raise ValueError("Model type not supported")
 
