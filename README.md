@@ -1,4 +1,4 @@
-# SQuAW - Speech Quality Assessment w/ Whisper
+# WIP
 
 Usage:
 `python3 get_score.py /path/to/16k_wav_file.wav`
