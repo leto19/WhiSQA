@@ -4,16 +4,16 @@ import torchaudio
 import argparse
 import torch
 
-def get_score(audio_file: str, model_type: str) -> None:
+def get_score(audio_file: str, model_type: str) -> torch.Tensor:
     """
     Get a score for a given audio file and print it. 
 
     Args:
-        audio_file (str): Path to the audio file, must be 16K sample rate. 
+        audio_file (str): Path to the audio file, must be 16K sample rate and mono. 
         model_type (str): Single MOS (more accurate) or multidimensional [MOS, Noisiness, Coloration, Discontinuity and Loudness].
 
     Returns:
-        None
+        score (torch.Tensor): either MOS score or MOS + speech dimensions 
     """
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -37,7 +37,7 @@ def get_score(audio_file: str, model_type: str) -> None:
 
     #check channels
     if waveform.shape[0] != 1:
-        raise ValueError("Number of input channels should be 1")
+        raise ValueError("Number of input channels must be 1")
 
     # Check sample rate
     if sample_rate != 16000:
@@ -47,7 +47,6 @@ def get_score(audio_file: str, model_type: str) -> None:
     score = model(waveform)
     if model_type == "multi":
         score = score.squeeze(0)
-
     return score 
 
     
