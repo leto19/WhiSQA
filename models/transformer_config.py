@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Dict, List
 import torch
 from torch.nn.functional import pad
 
