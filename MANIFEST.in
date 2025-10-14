@@ -1,0 +1,7 @@
+include README.md
+include requirements.txt
+include LICENSE
+recursive-include whisqa/models *.npz
+recursive-include whisqa/checkpoints *.pt
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

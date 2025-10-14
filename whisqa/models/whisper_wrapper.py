@@ -70,7 +70,12 @@ def mel_filters(device, n_mels: int = N_MELS) -> torch.Tensor:
         np.savez_compressed("mel_filters.npz",mel_80=librosa.filters.mel(sr=16000, n_fft=400, n_mels=80))
     """
     assert n_mels == 80, f"Unsupported n_mels: {n_mels}"
-    with np.load("models/mel_filters.npz",allow_pickle=True) as f:
+    
+    # Use path relative to this file
+    from pathlib import Path
+    mel_filters_path = Path(__file__).parent / "mel_filters.npz"
+    
+    with np.load(mel_filters_path, allow_pickle=True) as f:
         return torch.from_numpy(f[f"mel_{n_mels}"]).to(device)
 
 

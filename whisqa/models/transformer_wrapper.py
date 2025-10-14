@@ -2,10 +2,7 @@ import math
 from torch import Tensor, nn
 import torch
 
-try:
-    from transformer_config import Config
-except:
-    from models.transformer_config import Config
+from .transformer_config import Config
 
 class TransformerWrapper(nn.Module):
 
