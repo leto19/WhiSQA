@@ -1,0 +1,2 @@
+[console_scripts]
+whisqa = whisqa.cli:main
